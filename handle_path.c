@@ -5,74 +5,86 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-/* execute_command: function to execute the entered command.
- * Main: Parses the input into an array of arguments.
+/**
+ *_eputs - prints an input string
+ * @str: the string to be printed
  *
- * Return: 0
+ * Return: Nothing
  */
- 
-void execute_command(char *args[]) {
-    
-    char *path = getenv("PATH");
-    char *token = strtok(path, ":");
+void _eputs(char *str)
+{
+	int i = 0;
 
-    while (token != NULL) {
-        char executable_path[MAX_INPUT_SIZE];
-        snprintf(executable_path, sizeof(executable_path), "%s/%s", token, args[0]);
-
-        if (access(executable_path, X_OK) == 0) {
-           
-            pid_t pid = fork();
-
-            if (pid == -1) {
-                perror("fork");
-            } else if (pid == 0) {
-                
-                if (execvp(executable_path, args) == -1) {
-                    perror("execvp");
-                    exit(EXIT_FAILURE);
-                }
-            } else {
-                
-                int status;
-                waitpid(pid, &status, 0);
-                return; 
-            }
-        }
-
-        token = strtok(NULL, ":");
-    }
-
-    
-    fprintf(stderr, "%s: command not found\n", args[0]);
+	if (!str)
+		return;
+	while (str[i] != '\0')
+	{
+		_eputchar(str[i]);
+		i++;
+	}
 }
 
-int main(void) {
-    char input[MAX_INPUT_SIZE];
+/**
+ * _eputchar - prints the character c to stderr
+ * @c: The character to print
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _eputchar(char c)
+{
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-    while (1) {
-        printf(":) ");
-        if (fgets(input, sizeof(input), stdin) == NULL) {
-           
-            break;
-        }
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	{
+		write(2, buf, i);
+		i = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
+	return (1);
+}
 
-        input[strcspn(input, "\n")] = '\0';
+/**
+ * _putfd - prints the character c to given fd
+ * @c: The character to print
+ * @fd: The filedescriptor to write to
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
+int _putfd(char c, int fd)
+{
+	static int i;
+	static char buf[WRITE_BUF_SIZE];
 
-        char *args[MAX_NUM_ARGS];
-        int num_args = 0;
+	if (c == BUF_FLUSH || i >= WRITE_BUF_SIZE)
+	{
+		write(fd, buf, i);
+		i = 0;
+	}
+	if (c != BUF_FLUSH)
+		buf[i++] = c;
+	return (1);
+}
 
-        char *token = strtok(input, " ");
-        while (token != NULL && num_args < MAX_NUM_ARGS) {
-            args[num_args++] = token;
-            token = strtok(NULL, " ");
-        }
+/**
+ *_putsfd - should prints an input string
+ * @str: the string to be printed
+ * @fd: the filedescriptor to write to
+ *
+ * Return: the number of chars put
+ */
+int _putsfd(char *str, int fd)
+{
+	int i = 0;
 
-        if (num_args > 0) {
-            args[num_args] = NULL;
-            execute_command(args);
-        }
-    }
-
-    return 0;
+	if (!str)
+		return (0);
+	while (*str)
+	{
+		i += _putfd(*str++, fd);
+	}
+	return (i);
 }

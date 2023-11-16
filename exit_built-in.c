@@ -5,133 +5,98 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
-#define MAX_INPUT_SIZE 256
-#define MAX_NUM_ARGS 64
-
-
 /**
- * is_exit_command - Check if the command is "exit".
- * @command: The command to check.
- *
- * Return: 1 if the command is "exit", 0 otherwise.
- *
+ * _myexit - should exits the shell
+ * @info: Structure containing potential arguments. should  maintain
+ *          constant function prototype.
+ *  Return: exits with a given exit status
+ *         (0) if info.argv[0] != "exit"
  */
-
-
-int is_exit_command(char *command)
+int _myexit(info_t *info)
 {
+	int exitcheck;
 
-	return (strcmp(command, "exit") == 0);
+	if (info->argv[1])  /* If there is an exit arguement */
+	{
+		exitcheck = _erratoi(info->argv[1]);
+		if (exitcheck == -1)
+		{
+			info->status = 2;
+			print_error(info, "Illegal number: ");
+			_eputs(info->argv[1]);
+			_eputchar('\n');
+			return (1);
+		}
+		info->err_num = _erratoi(info->argv[1]);
+		return (-2);
+	}
+	info->err_num = -1;
+	return (-2);
 }
 
-
 /**
- * execute_exit_command - Execute the "exit" command.
- * @args: The arguments passed to the command.
+ * _mycd - changes the current directory of the process
+ * @info: Structure containing potential arguments. Used to maintain
+ *          constant function prototype.
+ *  Return: Always 0
  */
-
-
-int execute_exit_command(char *args[])
-
+int _mycd(info_t *info)
 {
+	char *s, *dir, buffer[1024];
+	int chdir_ret;
 
-
-	if (args[1] != NULL)
+	s = getcwd(buffer, 1024);
+	if (!s)
+		_puts("TODO: >>getcwd failure emsg here<<\n");
+	if (!info->argv[1])
 	{
-	int exit_status = atoi(args[1]);
-		exit(exit_status);
+		dir = _getenv(info, "HOME=");
+		if (!dir)
+			chdir_ret = /* TODO: what should this be? */
+				chdir((dir = _getenv(info, "PWD=")) ? dir : "/");
+		else
+			chdir_ret = chdir(dir);
+	}
+	else if (_strcmp(info->argv[1], "-") == 0)
+	{
+		if (!_getenv(info, "OLDPWD="))
+		{
+			_puts(s);
+			_putchar('\n');
+			return (1);
+		}
+		_puts(_getenv(info, "OLDPWD=")), _putchar('\n');
+		chdir_ret = /* TODO: what should this be? */
+			chdir((dir = _getenv(info, "OLDPWD=")) ? dir : "/");
+	}
+	else
+		chdir_ret = chdir(info->argv[1]);
+	if (chdir_ret == -1)
+	{
+		print_error(info, "can't cd to ");
+		_eputs(info->argv[1]), _eputchar('\n');
 	}
 	else
 	{
-		exit(0);
+		_setenv(info, "OLDPWD", _getenv(info, "PWD="));
+		_setenv(info, "PWD", getcwd(buffer, 1024));
 	}
-}
-
-
-/**
- * execute_command - Execute a general command.
- * @args: The arguments passed to the command.
- */
-
-
-int execute_exit_command(char *args[])
-{
-
-
-	pid_t pid = fork();
-
-	if (pid == -1)
-	{
-		perror("fork");
-	
-}
-
-        else if (pid == 0)
-	{
-		if (execvp(args[0], args) == -1)
-		{
-			perror("execvp");
-			exit(EXIT_FAILURE);
-		}
-	}
-	else
-	{
-		int status;
-		waitpid(pid, &status, 0);
-	}
-}
-
-
-/**
- * main - Main function of the shell.
- *
- * Return: Always 0.
- */
-
-
-int main(void)
-
-{
-
-	
-	char input[MAX_INPUT_SIZE];
-
-	while (1)
-	{
-		printf(":) ");
-		if (fgets(input, sizeof(input), stdin) == NULL)
-		{
-			break;
-		}
-		input[strcspn(input, "\n")] = '\0';
-
-		char *args[MAX_NUM_ARGS];
-		int num_args = 0;
-
-		char *token = strtok(input, " ");
-		while (token != NULL && num_args < MAX_NUM_ARGS)
-		{
-			args[num_args++] = token;
-			token = strtok(NULL, " ");
-		}
-
-		if (num_args > 0)
-		{
-			args[num_args] = NULL;
-
-			if (is_exit_command(args[0]))
-			{
-				execute_exit_command(args);
-			}
-			else
-			{
-				execute_command(args);
-			}
-		}
-	}
-
 	return (0);
 }
 
+/**
+ * _myhelp - checks andchanges the current directory of the process
+ * @info: Structure containing potential arguments. Used to maintain
+ *          constant function prototype.
+ *  Return: Always 0
+ */
+int _myhelp(info_t *info)
+{
+	char **arg_array;
 
-
+	arg_array = info->argv;
+	_puts("help call works. Function not yet implemented \n");
+	if (0)
+		_puts(*arg_array); /* temp att_unused workaround */
+	return (0);
+}

@@ -8,39 +8,9 @@
 #define MAX_INPUT_SIZE 1024
 #define MAX_ARGS 64
 
-extern char **environ;
-
 void display_prompt() {
     printf("#hsh$ ");
     fflush(stdout);
-}
-
-char *find_executable(const char *command) {
-    char *path = getenv("PATH");
-    char *dir;
-    char *token = strtok(path, ":");
-
-    while (token != NULL) {
-        char *executable = malloc(strlen(token) + strlen(command) + 2);
-        sprintf(executable, "%s/%s", token, command);
-
-        if (access(executable, X_OK) == 0) {
-            return executable;
-        }
-
-        free(executable);
-        token = strtok(NULL, ":");
-    }
-
-    return NULL;
-}
-
-void print_environment() {
-    char **env = environ;
-    while (*env) {
-        printf("%s\n", *env);
-        env++;
-    }
 }
 
 int main() {
@@ -58,12 +28,7 @@ int main() {
         input[strcspn(input, "\n")] = '\0';
 
         if (strcmp(input, "exit") == 0) {
-            // User entered "exit," terminate the shell
             break;
-        } else if (strcmp(input, "env") == 0) {
-            // User entered "env," print the environment
-            print_environment();
-            continue;
         }
 
         // Tokenize the input into command and arguments
@@ -79,32 +44,24 @@ int main() {
 
         args[arg_count] = NULL;
 
-        // Find the executable in the PATH
-        char *executable = find_executable(args[0]);
-
-        if (executable == NULL) {
-            printf("%s: command not found\n", args[0]);
-            continue;
-        }
-
         pid_t pid = fork();
 
         if (pid == -1) {
             perror("fork");
-            free(executable);
             exit(EXIT_FAILURE);
         } else if (pid == 0) {
             // Child process
-            execvp(executable, args);
-            perror(executable);
-            free(executable);
+            execvp(args[0], args);
+            perror(args[0]);
             exit(EXIT_FAILURE);
         } else {
             // Parent process
             int status;
             waitpid(pid, &status, 0);
 
-            free(executable);
+            if (WIFEXITED(status) && WEXITSTATUS(status) == 127) {
+                printf("%s: command not found\n", args[0]);
+            }
         }
     }
 

@@ -8,8 +8,6 @@
 #define MAX_INPUT_SIZE 1024
 #define MAX_ARGS 64
 
-extern char **environ;
-
 void display_prompt() {
     printf("#hsh$ ");
     fflush(stdout);
@@ -35,14 +33,6 @@ char *find_executable(const char *command) {
     return NULL;
 }
 
-void print_environment() {
-    char **env = environ;
-    while (*env) {
-        printf("%s\n", *env);
-        env++;
-    }
-}
-
 int main() {
     char input[MAX_INPUT_SIZE];
 
@@ -58,12 +48,7 @@ int main() {
         input[strcspn(input, "\n")] = '\0';
 
         if (strcmp(input, "exit") == 0) {
-            // User entered "exit," terminate the shell
             break;
-        } else if (strcmp(input, "env") == 0) {
-            // User entered "env," print the environment
-            print_environment();
-            continue;
         }
 
         // Tokenize the input into command and arguments

@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <errno.h>
 
 /**
  * hsh - main shell loop
@@ -12,7 +13,7 @@
  *
  * Return: 0 on success, 1 on error, or error code
  */
-int hsh(info_t *info, char **av)
+int hsh(ino_t *info, char **av)
 {
 	ssize_t r = 0;
 	int builtin_ret = 0;
@@ -57,7 +58,7 @@ int hsh(info_t *info, char **av)
  *			1 if builtin found but not successful,
  *			-2 if builtin signals exit()
  */
-int find_builtin(info_t *info)
+int find_builtin(ino_t *info)
 {
 	int i, built_in_ret = -1;
 	builtin_table builtintbl[] = {
@@ -88,7 +89,7 @@ int find_builtin(info_t *info)
  *
  * Return: void
  */
-void find_cmd(info_t *info)
+void find_cmd(ino_t *info)
 {
 	char *path = NULL;
 	int i, k;
@@ -105,20 +106,20 @@ void find_cmd(info_t *info)
 	if (!k)
 		return;
 
-	path = find_path(info, _getenv(info, "PATH="), info->argv[0]);
+	path = find_path(info, _getenv(info, "PATH="), info-argv[0]);
 	if (path)
 	{
-		info->path = path;
+		info-path = path;
 		fork_cmd(info);
 	}
 	else
 	{
 		if ((interactive(info) || _getenv(info, "PATH=")
-			|| info->argv[0][0] == '/') && is_cmd(info, info->argv[0]))
+			|| info-argv[0][0] == '/') && is_cmd(info, info->argv[0]))
 			fork_cmd(info);
 		else if (*(info->arg) != '\n')
 		{
-			info->status = 127;
+			info-status = 127;
 			print_error(info, "not found\n");
 		}
 	}
@@ -130,7 +131,7 @@ void find_cmd(info_t *info)
  *
  * Return: void
  */
-void fork_cmd(info_t *info)
+void fork_cmd(ino_t *info)
 {
 	pid_t child_pid;
 
@@ -143,7 +144,7 @@ void fork_cmd(info_t *info)
 	}
 	if (child_pid == 0)
 	{
-		if (execve(info->path, info->argv, get_environ(info)) == -1)
+		if (execve(info-path, info-argv, get_environ(info)) == -1)
 		{
 			free_info(info, 1);
 			if (errno == EACCES)
@@ -154,11 +155,11 @@ void fork_cmd(info_t *info)
 	}
 	else
 	{
-		wait(&(info->status));
-		if (WIFEXITED(info->status))
+		wait(&(info-status));
+		if (WIFEXITED(info-status))
 		{
-			info->status = WEXITSTATUS(info->status);
-			if (info->status == 126)
+			info-status = WEXITSTATUS(info->status);
+			if (info-status == 126)
 				print_error(info, "Permission denied\n");
 		}
 	}

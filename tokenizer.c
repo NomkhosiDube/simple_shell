@@ -22,8 +22,11 @@ char **strtow(char *str, char *d)
 	if (!d)
 		d = " ";
 	for (i = 0; str[i] != '\0'; i++)
-		if (!is_delim(str[i], d) && (is_delim(str[i + 1], d) || !str[i + 1]))
-			numwords++;
+		int is_delim(char c, const char *delimiters);  /* Declaration*/
+ int result = is_delim(str[i + 1], d) || !str[i + 1];
+if (!is_delim(str[i], d) && result) 
+
+			numwords++
 
 	if (numwords == 0)
 		return (NULL);

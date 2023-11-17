@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <limits.h>
 
 /**
  * _erratoi - changes a string to an integer
@@ -43,7 +44,7 @@ int erratoi(char *s)
 void _eputchar(char c); 
 {
 	_eputs(info->fname);
-	_eputs(": ");
+	_eputs(": ";
 	print_d(info->line_count, STDERR_FILENO);
 	_eputs(": ");
 	_eputs(info->argv[0]);
@@ -60,16 +61,16 @@ void _eputchar(char c);
  */
 int print_d(int input, int fd)
 {
-	int (*__putchar)(char) = _putchar;
+	int (* putchar)(char) = putchar;
 	int i, count = 0;
 	unsigned int _abs_, current;
 
 	if (fd == STDERR_FILENO)
-		__putchar = _eputchar;
+		putchar = putchar;
 	if (input < 0)
 	{
 		_abs_ = -input;
-		__putchar('-');
+		putchar('-');
 		count++;
 	}
 	else

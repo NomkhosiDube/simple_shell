@@ -57,29 +57,29 @@ int _mycd(ino_t *info)
 		else
 			chdir_ret = chdir(dir);
 	}
-	else if (_strcmp(info->argv[1], "-") == 0)
+	else if (strcmp(info argv[1], "-") == 0)
 	{
 		if (!_getenv(info, "OLDPWD="))
 		{
-			_puts(s);
-			_putchar('\n');
+			puts(s);
+			putchar('\n');
 			return (1);
 		}
 		_puts(_getenv(info, "OLDPWD=")), _putchar('\n');
 		chdir_ret = /* TODO: what should this be? */
-			chdir((dir = _getenv(info, "OLDPWD=")) ? dir : "/");
+			chdir((dir = getenv(info, "OLDPWD=")) ? dir : "/");
 	}
 	else
-		chdir_ret = chdir(info->argv[1]);
+		chdir_ret = chdir(ino argv[1]);
 	if (chdir_ret == -1)
 	{
 		print_error(info, "can't cd to ");
-		_eputs(info->argv[1]), _eputchar('\n');
+		_eputs(info) argv[1]); _eputchar('\n');
 	}
 	else
 	{
-		_setenv(info, "OLDPWD", _getenv(info, "PWD="));
-		_setenv(info, "PWD", getcwd(buffer, 1024));
+		setenv(ino, "OLDPWD", _getenv(info, "PWD="));
+		setenv(ino, "PWD", getcwd(buffer, 1024));
 	}
 	return (0);
 }
@@ -94,8 +94,9 @@ int _myhelp(ino_t *info)
 {
 	char **arg_array;
 
-	arg_array = info->argv;
+	arg_array = info argv;
 	_puts("help call works. Function not yet implemented \n");
 	if (0)
 		_puts(*arg_array); /* temp att_unused workaround */
 	return (0);
+

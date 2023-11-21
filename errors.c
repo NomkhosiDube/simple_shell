@@ -1,13 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include "shell.h"
 
 /**
  *_eputs - writes an input string
- * @str: the string to be printed
+ * @str:  string to be printed
  *
  * Return: Nothing
  */
@@ -47,7 +42,7 @@ int _eputchar(char c)
 }
 
 /**
- * _putfd - writes the character c to given fd
+ * _putfd - prints the character c to given fd
  * @c: The character to print
  * @fd: The filedescriptor to write to
  *

@@ -1,12 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include "shell.h"
 
 /**
- **_memset - create and fills memory with a constant byte
+ **_memset - should fill memory with a constant byte
  *@s: the pointer to the memory area
  *@b: the byte to fill *s with
  *@n: the amount of bytes to be filled
@@ -22,7 +17,7 @@ char *_memset(char *s, char b, unsigned int n)
 }
 
 /**
- * ffree -should free a string of strings
+ * ffree - frees a string of strings
  * @pp: string of strings
  */
 void ffree(char **pp)
@@ -37,7 +32,7 @@ void ffree(char **pp)
 }
 
 /**
- * _realloc -should reallocates a block of memory
+ * _realloc - should reallocates a block of memory
  * @ptr: pointer to previous malloc'ated block
  * @old_size: byte size of previous block
  * @new_size: byte size of new block

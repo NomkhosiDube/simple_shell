@@ -1,14 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
-
+#include "shell.h"
 
 /**
- * _strlen - returns the length of a string
+ * _strlen - prints the length of a string
  * @s: the string whose length to check
  *
  * Return: integer length of string
@@ -48,7 +41,7 @@ int _strcmp(char *s1, char *s2)
 }
 
 /**
- * starts_with - should check if needle starts with haystack
+ * starts_with - should checks if needle starts with haystack
  * @haystack: string to search
  * @needle: the substring to find
  *
@@ -63,7 +56,7 @@ char *starts_with(const char *haystack, const char *needle)
 }
 
 /**
- * _strcat -should concatenates two strings
+ * _strcat - should concatenates two strings
  * @dest: the destination buffer
  * @src: the source buffer
  *

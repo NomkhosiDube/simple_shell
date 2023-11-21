@@ -1,18 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <limits.h>
+#include "shell.h"
 
 /**
- * _erratoi - changes a string to an integer
+ * _erratoi - converts a string to an integer
  * @s: the string to be converted
  * Return: 0 if no numbers in string, converted number otherwise
  *       -1 on error
  */
-int erratoi(char *s)
+int _erratoi(char *s)
 {
 	int i = 0;
 	unsigned long int result = 0;
@@ -41,10 +35,10 @@ int erratoi(char *s)
  * Return: 0 if no numbers in string, converted number otherwise
  *        -1 on error
  */
-void _eputchar(char c); 
+void print_error(info_t *info, char *estr)
 {
 	_eputs(info->fname);
-	_eputs(": ";
+	_eputs(": ");
 	print_d(info->line_count, STDERR_FILENO);
 	_eputs(": ");
 	_eputs(info->argv[0]);
@@ -53,7 +47,7 @@ void _eputchar(char c);
 }
 
 /**
- * print_d -  prints a decimal (integer) number (base 10)
+ * print_d - function prints a decimal (integer) number (base 10)
  * @input: the input
  * @fd: the filedescriptor to write to
  *
@@ -61,16 +55,16 @@ void _eputchar(char c);
  */
 int print_d(int input, int fd)
 {
-	int (* putchar)(char) = putchar;
+	int (*__putchar)(char) = _putchar;
 	int i, count = 0;
 	unsigned int _abs_, current;
 
 	if (fd == STDERR_FILENO)
-		putchar = putchar;
+		__putchar = _eputchar;
 	if (input < 0)
 	{
 		_abs_ = -input;
-		putchar('-');
+		__putchar('-');
 		count++;
 	}
 	else
@@ -92,7 +86,7 @@ int print_d(int input, int fd)
 }
 
 /**
- * convert_number - change function, a clone of itoa
+ * convert_number - should convert function, a clone of itoa
  * @num: number
  * @base: base
  * @flags: argument flags
@@ -128,7 +122,7 @@ char *convert_number(long int num, int base, int flags)
 }
 
 /**
- * remove_comments - should replace first instance of '#' with '\0'
+ * remove_comments -should function replaces first instance of '#' with '\0'
  * @buf: address of the string to modify
  *
  * Return: Always 0;

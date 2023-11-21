@@ -1,12 +1,7 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include "shell.h"
 
 /**
- * **strtow -should split a string into words. Repeat delimiters are ignored
+ * **strtow - should splits a string into words. Repeat delimiters are ignored
  * @str: the input string
  * @d: the delimeter string
  * Return: a pointer to an array of strings, or NULL on failure
@@ -22,11 +17,8 @@ char **strtow(char *str, char *d)
 	if (!d)
 		d = " ";
 	for (i = 0; str[i] != '\0'; i++)
-		int is_delim(char c, const char *delimiters);  /* Declaration*/
- int result = is_delim(str[i + 1], d) || !str[i + 1];
-if (!is_delim(str[i], d) && result) 
-
-			numwords++
+		if (!is_delim(str[i], d) && (is_delim(str[i + 1], d) || !str[i + 1]))
+			numwords++;
 
 	if (numwords == 0)
 		return (NULL);
@@ -57,7 +49,7 @@ if (!is_delim(str[i], d) && result)
 }
 
 /**
- * **strtow2 -should split a string into words
+ * **strtow2 - should splits a string into words
  * @str: the input string
  * @d: the delimeter
  * Return: a pointer to an array of strings, or NULL on failure

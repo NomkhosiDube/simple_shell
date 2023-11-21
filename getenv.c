@@ -1,17 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include "shell.h"
 
 /**
- * get_environ - checks the string array copy of our environ
+ * get_environ - printss the string array copy of our environ
  * @info: Structure containing potential arguments. Used to maintain
  *          constant function prototype.
  * Return: Always 0
  */
-char **get_environ(ino_t *info)
+char **get_environ(info_t *info)
 {
 	if (!info->environ || info->env_changed)
 	{
@@ -29,7 +24,7 @@ char **get_environ(ino_t *info)
  *  Return: 1 on delete, 0 otherwise
  * @var: the string env var property
  */
-int _unsetenv(ino_t *info, char *var)
+int _unsetenv(info_t *info, char *var)
 {
 	list_t *node = info->env;
 	size_t i = 0;
@@ -55,7 +50,7 @@ int _unsetenv(ino_t *info, char *var)
 }
 
 /**
- * _setenv - prints a new environment variable,
+ * _setenv - creates a new environment variable,
  *             or modify an existing one
  * @info: Structure containing potential arguments. Used to maintain
  *        constant function prototype.
@@ -63,7 +58,7 @@ int _unsetenv(ino_t *info, char *var)
  * @value: the string env var value
  *  Return: Always 0
  */
-int _setenv(ino_t *info, char *var, char *value)
+int _setenv(info_t *info, char *var, char *value)
 {
 	char *buf = NULL;
 	list_t *node;

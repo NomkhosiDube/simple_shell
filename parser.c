@@ -1,23 +1,18 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include "shell.h"
 
 /**
- * is_cmd - should determines if a file is an executable command
+ * is_cmd - checks if a file is an executable command
  * @info: the info struct
  * @path: path to the file
  *
  * Return: 1 if true, 0 otherwise
  */
-int is_cmd(ino_t *info, char *path)
+int is_cmd(info_t *info, char *path)
 {
-	struct stat ;
+	struct stat st;
 
 	(void)info;
-	if (!path || strcat(path, &st))
+	if (!path || stat(path, &st))
 		return (0);
 
 	if (st.st_mode & S_IFREG)
@@ -28,7 +23,7 @@ int is_cmd(ino_t *info, char *path)
 }
 
 /**
- * dup_chars -should duplicates characters
+ * dup_chars - should duplicate characters
  * @pathstr: the PATH string
  * @start: starting index
  * @stop: stopping index
@@ -48,21 +43,21 @@ char *dup_chars(char *pathstr, int start, int stop)
 }
 
 /**
- * find_path -should finds this cmd in the PATH string
+ * find_path -should find this cmd in the PATH string
  * @info: the info struct
  * @pathstr: the PATH string
  * @cmd: the cmd to find
  *
  * Return: full path of cmd if found or NULL
  */
-char *find_path(ino_t *info, char *pathstr, char *cmd)
+char *find_path(info_t *info, char *pathstr, char *cmd)
 {
 	int i = 0, curr_pos = 0;
 	char *path;
 
 	if (!pathstr)
 		return (NULL);
-	if ((strlen(cmd) > 2) && starts_with(cmd, "./"))
+	if ((_strlen(cmd) > 2) && starts_with(cmd, "./"))
 	{
 		if (is_cmd(info, cmd))
 			return (cmd);
@@ -73,11 +68,11 @@ char *find_path(ino_t *info, char *pathstr, char *cmd)
 		{
 			path = dup_chars(pathstr, curr_pos, i);
 			if (!*path)
-				strcat(path, cmd);
+				_strcat(path, cmd);
 			else
 			{
-				strcat(path, "/");
-				strcat(path, cmd);
+				_strcat(path, "/");
+				_strcat(path, cmd);
 			}
 			if (is_cmd(info, path))
 				return (path);
